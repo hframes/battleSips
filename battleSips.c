@@ -187,7 +187,9 @@ int main(void)
     // Shoot Player 2
 
     // check sea
-    checkSea(&seaP1);
+    if (!checkSea(&seaP1)){
+        printf("Game finished!");
+    }
 
     return 0;
 }
