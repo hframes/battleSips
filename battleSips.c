@@ -4,7 +4,9 @@
 const int seaDimX = 4;
 const int seaDimY = 4;
 const int numberOfShips = 3;
-const int dbg = 1;
+const int numberOfPlayers = 2;
+
+const int dbg = 0;
 
 struct battleSea
 {
@@ -145,7 +147,7 @@ int checkShipArray(struct battleSea *sea)
 {
     for (int i = 0; i < numberOfShips; i++)
     {
-        if ((*sea).shipStatus[i] < i+1)
+        if ((*sea).shipStatus[i] < i + 1)
         {
             return 1;
         }
@@ -157,13 +159,40 @@ int main(void)
 {
     printf("Welcome to Battle Sips!\n\n");
 
+    printf("Initializing player 1...");
     // Create sea for Player1
     struct battleSea seaP1 = {1};
     initBattleSea(&seaP1);
     resetSea(&seaP1);
-    printSea(seaP1);
+    printf("done!\n");
 
     // Create sea for Player2
+    printf("Initializing player 2...");
+    struct battleSea seaP2 = {2};
+    initBattleSea(&seaP2);
+    resetSea(&seaP2);
+    printf("done!\n");
+
+    printf("\n");
+
+    for (int player = 0; player < numberOfPlayers; player++)
+    {
+        for (int i = 0; i < numberOfShips; i++)
+        {
+            printf("Player %d place ship %d\n",player+1, i+1);
+            int x, y;
+
+            // Ask the user to type a number
+            printf("Type x: \n");
+            scanf("%d", &x);
+            printf("Type y: \n");
+            scanf("%d", &y);
+
+            // Output the number the user typed
+            printf("Coordinates: %d,%d \n", x, y);
+        }
+        printf("\n");
+    }
 
     // Place ships for Player1
     //  Place ship 3
