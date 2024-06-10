@@ -4,9 +4,9 @@
 const int seaDimX = 4;
 const int seaDimY = 4;
 const int numberOfShips = 3;
-const int numberOfPlayers = 2;
+const int numberOfPlayers = 1;
 
-const int dbg = 0;
+const int dbg = 1;
 
 struct battleSea
 {
@@ -177,31 +177,42 @@ int main(void)
 
     for (int player = 0; player < numberOfPlayers; player++)
     {
-        for (int i = 0; i < numberOfShips; i++)
+        printf("---Player %d--- \n", player + 1);
+        for (int i = numberOfShips; i > 0; i--)
         {
-            printf("Player %d place ship %d\n",player+1, i+1);
-            int x, y;
+            printf("-Place ship %d-\n", i);
+            int x, y, o;
+            do
+            {
+                printf("Type orientation: ");
+                scanf("%d", &o);
+            } while (o < 0 || o > 1);
 
-            // Ask the user to type a number
-            printf("Type x: \n");
-            scanf("%d", &x);
-            printf("Type y: \n");
-            scanf("%d", &y);
 
+            do
+            {
+                printf("Type x: ");
+                scanf("%d", &x);
+            } while (o == 0 && (x > seaDimX - i || x < 0));
+
+            do
+            {
+                printf("\nType y:");
+                scanf("%d", &y);
+            } while (o == 1 && (y > seaDimY - i || y < 0));
+
+            printf("\n");
             // Output the number the user typed
             printf("Coordinates: %d,%d \n", x, y);
+            placeShip(i, x, y, o, &seaP1);
         }
         printf("\n");
+        printSea(seaP1);
     }
 
     // Place ships for Player1
     //  Place ship 3
     // while(!placeShip(3, 3, 2, 1, &seaP1));
-    placeShip(3, 3, 1, 1, &seaP1);
-    placeShip(2, 0, 0, 0, &seaP1);
-    placeShip(1, 0, 3, 0, &seaP1);
-    if (dbg)
-        (printSea(seaP1));
 
     // Place ships for Player2
     checkHit(shoot(0, 0, &seaP1), &seaP1); // hit
