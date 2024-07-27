@@ -155,7 +155,7 @@ int checkShipArray(struct battleSea *sea)
     return 0;
 }
 
-int main(void)
+// int main(void)
 {
     printf("Welcome to Battle Sips!\n\n");
 
