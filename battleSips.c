@@ -156,101 +156,101 @@ int checkShipArray(struct battleSea *sea)
 }
 
 // int main(void)
-{
-    printf("Welcome to Battle Sips!\n\n");
+// {
+//     printf("Welcome to Battle Sips!\n\n");
 
-    printf("Initializing player 1...");
-    // Create sea for Player1
-    struct battleSea seaP1 = {1};
-    initBattleSea(&seaP1);
-    resetSea(&seaP1);
-    printf("done!\n");
+//     printf("Initializing player 1...");
+//     // Create sea for Player1
+//     struct battleSea seaP1 = {1};
+//     initBattleSea(&seaP1);
+//     resetSea(&seaP1);
+//     printf("done!\n");
 
-    // Create sea for Player2
-    printf("Initializing player 2...");
-    struct battleSea seaP2 = {2};
-    initBattleSea(&seaP2);
-    resetSea(&seaP2);
-    printf("done!\n");
+//     // Create sea for Player2
+//     printf("Initializing player 2...");
+//     struct battleSea seaP2 = {2};
+//     initBattleSea(&seaP2);
+//     resetSea(&seaP2);
+//     printf("done!\n");
 
-    printf("\n");
+//     printf("\n");
 
-    for (int player = 0; player < numberOfPlayers; player++)
-    {
-        printf("---Player %d--- \n", player + 1);
-        for (int i = numberOfShips; i > 0; i--)
-        {
-            printf("-Place ship %d-\n", i);
-            int x, y, o;
-            do
-            {
-                printf("Type orientation: ");
-                scanf("%d", &o);
-            } while (o < 0 || o > 1);
+//     for (int player = 0; player < numberOfPlayers; player++)
+//     {
+//         printf("---Player %d--- \n", player + 1);
+//         for (int i = numberOfShips; i > 0; i--)
+//         {
+//             printf("-Place ship %d-\n", i);
+//             int x, y, o;
+//             do
+//             {
+//                 printf("Type orientation: ");
+//                 scanf("%d", &o);
+//             } while (o < 0 || o > 1);
 
 
-            do
-            {
-                printf("Type x: ");
-                scanf("%d", &x);
-            } while (o == 0 && (x > seaDimX - i || x < 0));
+//             do
+//             {
+//                 printf("Type x: ");
+//                 scanf("%d", &x);
+//             } while (o == 0 && (x > seaDimX - i || x < 0));
 
-            do
-            {
-                printf("\nType y:");
-                scanf("%d", &y);
-            } while (o == 1 && (y > seaDimY - i || y < 0));
+//             do
+//             {
+//                 printf("\nType y:");
+//                 scanf("%d", &y);
+//             } while (o == 1 && (y > seaDimY - i || y < 0));
 
-            printf("\n");
-            // Output the number the user typed
-            printf("Coordinates: %d,%d \n", x, y);
-            placeShip(i, x, y, o, &seaP1);
-        }
-        printf("\n");
-        printSea(seaP1);
-    }
+//             printf("\n");
+//             // Output the number the user typed
+//             printf("Coordinates: %d,%d \n", x, y);
+//             placeShip(i, x, y, o, &seaP1);
+//         }
+//         printf("\n");
+//         printSea(seaP1);
+//     }
 
-    // Place ships for Player1
-    //  Place ship 3
-    // while(!placeShip(3, 3, 2, 1, &seaP1));
+//     // Place ships for Player1
+//     //  Place ship 3
+//     // while(!placeShip(3, 3, 2, 1, &seaP1));
 
-    // Place ships for Player2
-    checkHit(shoot(0, 0, &seaP1), &seaP1); // hit
-    printSea(seaP1);
-    checkHit(shoot(3, 3, &seaP1), &seaP1); // hit
-    printSea(seaP1);
-    checkHit(shoot(3, 0, &seaP1), &seaP1); // hit
-    printSea(seaP1);
-    checkHit(shoot(1, 0, &seaP1), &seaP1); // hit
-    printSea(seaP1);
-    checkHit(shoot(3, 2, &seaP1), &seaP1); // hit
-    printSea(seaP1);
-    checkHit(shoot(3, 1, &seaP1), &seaP1); // hit
-    printSea(seaP1);
-    // Shoot Player 1
-    // Shoot Player 2
+//     // Place ships for Player2
+//     checkHit(shoot(0, 0, &seaP1), &seaP1); // hit
+//     printSea(seaP1);
+//     checkHit(shoot(3, 3, &seaP1), &seaP1); // hit
+//     printSea(seaP1);
+//     checkHit(shoot(3, 0, &seaP1), &seaP1); // hit
+//     printSea(seaP1);
+//     checkHit(shoot(1, 0, &seaP1), &seaP1); // hit
+//     printSea(seaP1);
+//     checkHit(shoot(3, 2, &seaP1), &seaP1); // hit
+//     printSea(seaP1);
+//     checkHit(shoot(3, 1, &seaP1), &seaP1); // hit
+//     printSea(seaP1);
+//     // Shoot Player 1
+//     // Shoot Player 2
 
-    // check sea
-    if (!checkShipArray(&seaP1))
-    {
-        printf("Game Over! \n");
-    }
-    else
-    {
-        printf("Game continues...\n");
-    }
+//     // check sea
+//     if (!checkShipArray(&seaP1))
+//     {
+//         printf("Game Over! \n");
+//     }
+//     else
+//     {
+//         printf("Game continues...\n");
+//     }
 
-    checkHit(shoot(0, 3, &seaP1), &seaP1); // hit
-    printSea(seaP1);
-    // check sea
-    if (!checkShipArray(&seaP1))
-    {
-        printf("Game Over! \n");
-    }
-    else
-    {
-        printf("Game continues...\n");
-    }
+//     checkHit(shoot(0, 3, &seaP1), &seaP1); // hit
+//     printSea(seaP1);
+//     // check sea
+//     if (!checkShipArray(&seaP1))
+//     {
+//         printf("Game Over! \n");
+//     }
+//     else
+//     {
+//         printf("Game continues...\n");
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
