@@ -12,15 +12,28 @@ const uint8_t but_up    = 1;
 const uint8_t but_left  = 2;
 const uint8_t but_right = 3;
 const uint8_t but_down  = 4;
+const uint8_t but_no  = 0b11111;
 
 // Player pins
-const int pin_p1_select = 14;
-const int pin_p1_upp = 10;
-const int pin_p1_left = 12;
-const int pin_p1_right = 11;
-const int pin_p1_down = 13;
+const int pin_p1_select = 19;
+const int pin_p1_upp = 18;
+const int pin_p1_left = 17;
+const int pin_p1_right = 16;
+const int pin_p1_down = 15;
+
+const int pin_p2_select = 14;
+const int pin_p2_upp = 10;
+const int pin_p2_left = 12;
+const int pin_p2_right = 11;
+const int pin_p2_down = 13;
+
+const int p2ea_pin = 7;
+const int p2eb_pin = 8;
+
 const int p1ea_pin = 2;
 const int p1eb_pin = 3;
+
+
 Encoder p1Enc(p1ea_pin, p1eb_pin);
 const uint8_t pins_p1[nbr_user_inputs] = {
   [but_sel]   = pin_p1_select,
@@ -31,16 +44,6 @@ const uint8_t pins_p1[nbr_user_inputs] = {
 };
 
 
-
-
-
-const int pin_p2_select = 19;
-const int pin_p2_upp = 18;
-const int pin_p2_left = 17;
-const int pin_p2_right = 16;
-const int pin_p2_down = 15;
-const int p2ea_pin = 7;
-const int p2eb_pin = 8;
 Encoder p2Enc(p2ea_pin, p2eb_pin);
 const uint8_t pins_p2[nbr_user_inputs] = {
   [but_sel]   = pin_p2_select,
@@ -57,6 +60,10 @@ uint8_t p1B;
 uint8_t p2B;
 uint8_t p1_clicked = 0;
 uint8_t p2_clicked = 0;
+
+// MATRIX
+uint8_t matrixPlacementP1 = 0;
+uint8_t matrixPlacementP2 = 0;
 
 #define PIN        9 
 
@@ -88,20 +95,16 @@ void setup() {
 }
 
 void loop() {
+    delay(100);
+    updateInputs();
 
-
-
-  pixels.clear(); // Set all pixel colors to 'off'
-
-  for(int i=0; i<NUMPIXELS; i++) {
-  updateInputs();
-
-    pixels.setPixelColor(i, pixels.Color(50, 150, 50));
+    pixels.setPixelColor(matrixPlacementP1, pixels.Color(0, 5, 0));
 
     pixels.show();   // Send the updated pixel colors to the hardware.
 
-    delay(DELAYVAL); // Pause before next pass through loop
-  }
+  pixels.clear(); // Set all pixel colors to 'off'
+
+
 }
 
 
@@ -124,36 +127,101 @@ void updateButtonInput(uint8_t* but_status, const uint8_t* pins_player){
 
 uint8_t updateInputs(){
   static bool alternating;
+  uint8_t buttonResponse;
   if (alternating) {
-    Serial.println("A");
     updateButtonInput(&p1A, pins_p1);
-    if(p1B != 0b11111){
-      if(p1A == 0b11111){
-
-      }
-    }
-    p1_clicked = (p1A >> but_sel) & (p1A >> but_sel ^ p1B >> but_sel) << but_sel;
-
-    updateButtonInput(&p2A, pins_p2);
-    printButtonStatus(p1A);
-    printButtonStatus(p2A);
+    buttonResponse = checkButtonPress(p1A, p1B);
   } else {
-    Serial.println("B");
     updateButtonInput(&p1B, pins_p1);
-    p1_clicked = (p1B >> but_sel) & (p1B >> but_sel ^ p1A >> but_sel) << but_sel;
-    Serial.println(p1_clicked);
-    // p1_clicked = (p1A >> but_sel) & (p1A >> but_sel ^ p1B >> but_sel) << but_sel;
-    // p1_clicked = (p1A >> but_sel) & (p1A >> but_sel ^ p1B >> but_sel) << but_sel;
-    // p1_clicked = (p1A >> but_sel) & (p1A >> but_sel ^ p1B >> but_sel) << but_sel;
+    buttonResponse = checkButtonPress(p1B, p1A);
+  }
+  alternating = !alternating;
+  //Serial.println(buttonResponse);
+  matrixMovement(&matrixPlacementP1, buttonResponse);
+  return buttonResponse;
+}
 
-    updateButtonInput(&p2B, pins_p2);
-    
+int checkButtonPress(uint8_t newButton, uint8_t oldButton){
+  if(oldButton =  0b11111){
+    switch (newButton)
+    {
+    case  0b11111 & ~(1 << but_sel):
+      return but_sel;
+    case 0b11111 & ~(1 << but_up):
+      return but_up;
+    case 0b11111 & ~(1 << but_left):
+      return but_left;
+    case 0b11111 & ~(1 << but_right):
+      return but_right;
+    case 0b11111 & ~(1 << but_down):
+      return but_down;
+    default:
+      return 0b11111;
+      break;
+    }
   }
 }
 
-// uint8_t determineButton(uint8_t butValue){
-//   switch (butValue):
-//     case (31 << 0):
-    
-//     break;
+uint8_t caseInput(uint8_t input){
+
+}
+
+uint8_t matrixMovement(uint8_t* matrixPosPlayer, uint8_t dir){
+  switch (dir)
+  {
+  case but_sel:
+    // SELECT
+    break;
+  case but_up:
+    if(*matrixPosPlayer > 4){
+      *matrixPosPlayer = *matrixPosPlayer - 5;
+      Serial.print("Up: ");
+      Serial.println(*matrixPosPlayer);
+    }
+    break;
+  case but_left:
+    if((*matrixPosPlayer % 5) > 0){
+      *matrixPosPlayer = *matrixPosPlayer - 1;
+      Serial.print("Left: ");
+      Serial.println(*matrixPosPlayer);
+    }
+    break;
+  case but_right:
+    if((*matrixPosPlayer % 5) < 4){
+      *matrixPosPlayer = *matrixPosPlayer + 1;
+      Serial.print("Right: ");
+      Serial.println(*matrixPosPlayer);
+    }
+    break;
+  case but_down:
+    if(*matrixPosPlayer < 34){
+      *matrixPosPlayer = *matrixPosPlayer + 5;
+      Serial.print("Down: ");
+      Serial.println(*matrixPosPlayer);
+    }
+    break;
+  default:
+    break;
+  }
+}
+
+// uint8_t translateMatrix(uint8_t pos){
+//   if((pos / 5) % 2 != 0){
+//     Serial.println(pos);
+//     pos = (pos / 5) * (5 + 1)  - (pos % 5);
+//     Serial.println(pos);
+//     return pos
+//   }
 // }
+
+uint8_t updateMatrix(uint8_t* matrix){
+  for(int i=0; i<NUMPIXELS; i++) {
+  
+
+    pixels.setPixelColor(i, pixels.Color(0, 5, 0));
+
+    pixels.show();   // Send the updated pixel colors to the hardware.
+
+    delay(DELAYVAL); // Pause before next pass through loop
+  }
+}
