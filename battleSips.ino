@@ -17,8 +17,8 @@ const uint8_t but_no  = 0b11111;
 // Player pins
 const int pin_p1_select = 19;
 const int pin_p1_upp = 18;
-const int pin_p1_left = 17;
-const int pin_p1_right = 16;
+const int pin_p1_right = 17;
+const int pin_p1_left = 16;
 const int pin_p1_down = 15;
 
 const int pin_p2_select = 14;
@@ -95,10 +95,10 @@ void setup() {
 }
 
 void loop() {
-    delay(100);
+    delay(200);
     updateInputs();
 
-    pixels.setPixelColor(matrixPlacementP1, pixels.Color(0, 5, 0));
+    pixels.setPixelColor(translateMatrix(matrixPlacementP1), pixels.Color(0, 5, 0));
 
     pixels.show();   // Send the updated pixel colors to the hardware.
 
@@ -205,20 +205,29 @@ uint8_t matrixMovement(uint8_t* matrixPosPlayer, uint8_t dir){
   }
 }
 
-// uint8_t translateMatrix(uint8_t pos){
-//   if((pos / 5) % 2 != 0){
-//     Serial.println(pos);
-//     pos = (pos / 5) * (5 + 1)  - (pos % 5);
-//     Serial.println(pos);
-//     return pos
-//   }
-// }
+uint8_t translateMatrix(uint8_t pos){
+  // 0  1  2  3  4
+  // 9  8  7  6  5
+  // 10 11 12 13 14
+  
+  // 0  1  2  3  4
+  // 5  6  7  8  9
+  // 10 11 12 13 14
+
+  Serial.println(pos);
+  if(((pos / 5) % 2) != 0){
+    Serial.println(pos);
+    pos = ((pos / 5) * (5))  + (4 - (pos % 5));
+    Serial.println(pos);
+  }
+  return pos;
+}
 
 uint8_t updateMatrix(uint8_t* matrix){
   for(int i=0; i<NUMPIXELS; i++) {
   
 
-    pixels.setPixelColor(i, pixels.Color(0, 5, 0));
+    pixels.setPixelColor(translateMatrix(i), pixels.Color(0, 5, 0));
 
     pixels.show();   // Send the updated pixel colors to the hardware.
 
