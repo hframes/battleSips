@@ -40,7 +40,7 @@ const uint8_t pins_p1[NBR_USER_INPUTS] = {
     [but_down] = pin_p1_down,
 };
 
-Encoder p2Enc(p2ea_pin, p2eb_pin);
+Encoder encoder_p2(p2ea_pin, p2eb_pin);
 const uint8_t pins_p2[NBR_USER_INPUTS] = {
     [but_sel] = pin_p2_select,
     [but_up] = pin_p2_upp,
@@ -95,6 +95,14 @@ uint16_t matrixColors[40] = {510, 510, 510, 510, 510,
                              510, 510, 510, 510, 510,
                              510, 510, 510, 510, 510,
                              510, 510, 510, 510, 510};
+uint8_t matrixStrength[40] = {5, 5, 5, 5, 5,
+                              5, 5, 5, 5, 5,
+                              5, 5, 5, 5, 5,
+                              5, 5, 5, 5, 5,
+                              5, 5, 5, 5, 5,
+                              5, 5, 5, 5, 5,
+                              5, 5, 5, 5, 5,
+                              5, 5, 5, 5, 5};
 
 void setup()
 {
@@ -122,9 +130,8 @@ void loop()
 {
   caseInput(GAME_PAINTING, &positionMatrix_p1, updateInputs());
 
-  updateMatrix(matrixColors);
+  updateMatrix(matrixColors, matrixStrength);
 
-  Serial.println(positionMatrix_p1);
 }
 
 // Print button status
@@ -141,11 +148,11 @@ void printButtonStatus(uint8_t buttons)
 // Read button states and update array
 void updateButtonInput(uint8_t *but_status, const uint8_t *pins_player)
 {
-  *but_status = (*but_status & ~(1 << but_sel)) | digitalRead(pins_player[but_sel]) << but_sel;
-  *but_status = (*but_status & ~(1 << but_up)) | digitalRead(pins_player[but_up]) << but_up;
-  *but_status = (*but_status & ~(1 << but_left)) | digitalRead(pins_player[but_left]) << but_left;
+  *but_status = (*but_status & ~(1 << but_sel))   | digitalRead(pins_player[but_sel]) << but_sel;
+  *but_status = (*but_status & ~(1 << but_up))    | digitalRead(pins_player[but_up]) << but_up;
+  *but_status = (*but_status & ~(1 << but_left))  | digitalRead(pins_player[but_left]) << but_left;
   *but_status = (*but_status & ~(1 << but_right)) | digitalRead(pins_player[but_right]) << but_right;
-  *but_status = (*but_status & ~(1 << but_down)) | digitalRead(pins_player[but_down]) << but_down;
+  *but_status = (*but_status & ~(1 << but_down))  | digitalRead(pins_player[but_down]) << but_down;
 }
 
 uint8_t updateInputs()
@@ -166,6 +173,11 @@ uint8_t updateInputs()
   }
   alternating = !alternating;
   matrixColors[positionMatrix_p1] = encoder_p1.read();
+  matrixStrength[positionMatrix_p1] = encoder_p2.read();
+  Serial.print("Color: ");
+  Serial.print(matrixColors[positionMatrix_p1]);
+  Serial.print("\tStrength: ");
+  Serial.println(matrixStrength[positionMatrix_p1]);
   // Serial.println(encoderPos_p1);
   matrixMovement(positionMatrix_p1, buttonResponse);
   return buttonResponse;
@@ -181,35 +193,30 @@ int checkButtonPress(uint8_t newButton, uint8_t oldButton, uint32_t* time)
     case 0b11111 & ~(1 << but_sel):
       if(millis() - time[but_sel] > DEBOUNCE){
         time[but_sel] = millis();
-        Serial.println("Sel");
         return but_sel;
       }
       break;
     case 0b11111 & ~(1 << but_up):
       if(millis() - time[but_up] > DEBOUNCE){
         time[but_up] = millis();
-        Serial.println("Up");
         return but_up;
       }
       break;
     case 0b11111 & ~(1 << but_left):
       if(millis() - time[but_left] > DEBOUNCE){
         time[but_left] = millis();
-        Serial.println("left");
         return but_left;
       }
       break;
     case 0b11111 & ~(1 << but_right):
       if(millis() - time[but_right] > DEBOUNCE){
         time[but_right] = millis();
-        Serial.println("Right");
         return but_right;
       }
       break;
     case 0b11111 & ~(1 << but_down):
       if(millis() - time[but_down] > DEBOUNCE){
         time[but_down] = millis();
-        Serial.println("Down");
         return but_down;
       }
       break;
@@ -230,23 +237,23 @@ uint8_t caseInput(uint8_t stateGame, uint8_t *matrixPos, uint8_t button)
     break;
   case but_up:
     *matrixPos = matrixMovement(*matrixPos, but_up);
-    Serial.println("[CASE INPUT] up");
     encoder_p1.write(matrixColors[*matrixPos]);
+    encoder_p2.write(matrixStrength[*matrixPos]);
     break;
   case but_left:
     *matrixPos = matrixMovement(*matrixPos, but_left);
-    Serial.println("[CASE INPUT] left");
     encoder_p1.write(matrixColors[*matrixPos]);
+    encoder_p2.write(matrixStrength[*matrixPos]);
     break;
   case but_right:
     *matrixPos = matrixMovement(*matrixPos, but_right);
     encoder_p1.write(matrixColors[*matrixPos]);
-    Serial.println("[CASE INPUT] right");
+    encoder_p2.write(matrixStrength[*matrixPos]);
     break;
   case but_down:
     *matrixPos = matrixMovement(*matrixPos, but_down);
     encoder_p1.write(matrixColors[*matrixPos]);
-    Serial.println("[CASE INPUT] down");
+    encoder_p2.write(matrixStrength[*matrixPos]);
     break;
 
   default:
@@ -323,7 +330,7 @@ uint8_t translateMatrix(uint8_t pos)
 // }
 
 // Translate linear color to 3-dimensional color and update LED
-uint8_t setColor(uint16_t value, uint8_t led)
+uint8_t setColor(uint16_t value, uint16_t strength, uint8_t led)
 {
   value = value % 765;
   int red, green, blue;
@@ -346,15 +353,19 @@ uint8_t setColor(uint16_t value, uint8_t led)
     blue = 765 - value;
   }
 
+  red     = red   / (100/strength);
+  green   = green / (100/strength);
+  blue    = blue  / (100/strength);
+
   pixels.setPixelColor(translateMatrix(led), pixels.Color(red, green, blue));
 }
 
 // Updates all leds in matrix
-uint8_t updateMatrix(uint16_t *matrix)
+uint8_t updateMatrix(uint16_t* matrixColor, uint8_t* matrixStrength)
 {
   for (int i = 0; i < NUMPIXELS; i++)
   {
-    setColor(matrix[i], i);
+    setColor(matrixColor[i], matrixStrength[i], i);
     pixels.show(); // Send the updated pixel colors to the hardware.
   }
 }
