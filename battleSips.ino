@@ -27,11 +27,11 @@ const int pin_p2_left = 12;
 const int pin_p2_right = 11;
 const int pin_p2_down = 13;
 
-const int p2ea_pin = 7;
-const int p2eb_pin = 8;
-
 const int p1ea_pin = 2;
 const int p1eb_pin = 3;
+
+const int p2ea_pin = 7;
+const int p2eb_pin = 8;
 
 
 Encoder p1Enc(p1ea_pin, p1eb_pin);
@@ -55,11 +55,17 @@ const uint8_t pins_p2[nbr_user_inputs] = {
 
 // Input states
 uint8_t p1A;
-uint8_t p2A;
 uint8_t p1B;
+uint8_t p2A;
 uint8_t p2B;
-uint8_t p1_clicked = 0;
-uint8_t p2_clicked = 0;
+
+uint8_t p1EncA;
+uint8_t p1EncB;
+uint8_t p1EncPos;
+
+uint8_t p2EncA;
+uint8_t p2EncB;
+uint8_t p2EncPos;
 
 // MATRIX
 uint8_t matrixPlacementP1 = 0;
@@ -95,7 +101,7 @@ void setup() {
 }
 
 void loop() {
-    delay(200);
+    //delay(200);
     updateInputs();
 
     pixels.setPixelColor(translateMatrix(matrixPlacementP1), pixels.Color(0, 5, 0));
@@ -130,13 +136,16 @@ uint8_t updateInputs(){
   uint8_t buttonResponse;
   if (alternating) {
     updateButtonInput(&p1A, pins_p1);
+    //updateEncInput(&p1EncA, &p1EncB, p1ea_pin, p1eb_pin, &p1EncPos);
     buttonResponse = checkButtonPress(p1A, p1B);
   } else {
     updateButtonInput(&p1B, pins_p1);
+    //updateEncInput(&p1EncB, &p1EncA, p1ea_pin, p1eb_pin, &p1EncPos);
     buttonResponse = checkButtonPress(p1B, p1A);
   }
   alternating = !alternating;
-  //Serial.println(buttonResponse);
+  p1EncPos = p1Enc.read();
+  Serial.println(p1EncPos);
   matrixMovement(&matrixPlacementP1, buttonResponse);
   return buttonResponse;
 }
@@ -145,7 +154,7 @@ int checkButtonPress(uint8_t newButton, uint8_t oldButton){
   if(oldButton =  0b11111){
     switch (newButton)
     {
-    case  0b11111 & ~(1 << but_sel):
+    case 0b11111 & ~(1 << but_sel):
       return but_sel;
     case 0b11111 & ~(1 << but_up):
       return but_up;
@@ -175,29 +184,21 @@ uint8_t matrixMovement(uint8_t* matrixPosPlayer, uint8_t dir){
   case but_up:
     if(*matrixPosPlayer > 4){
       *matrixPosPlayer = *matrixPosPlayer - 5;
-      Serial.print("Up: ");
-      Serial.println(*matrixPosPlayer);
     }
     break;
   case but_left:
     if((*matrixPosPlayer % 5) > 0){
       *matrixPosPlayer = *matrixPosPlayer - 1;
-      Serial.print("Left: ");
-      Serial.println(*matrixPosPlayer);
     }
     break;
   case but_right:
     if((*matrixPosPlayer % 5) < 4){
       *matrixPosPlayer = *matrixPosPlayer + 1;
-      Serial.print("Right: ");
-      Serial.println(*matrixPosPlayer);
     }
     break;
   case but_down:
     if(*matrixPosPlayer < 34){
       *matrixPosPlayer = *matrixPosPlayer + 5;
-      Serial.print("Down: ");
-      Serial.println(*matrixPosPlayer);
     }
     break;
   default:
@@ -206,19 +207,8 @@ uint8_t matrixMovement(uint8_t* matrixPosPlayer, uint8_t dir){
 }
 
 uint8_t translateMatrix(uint8_t pos){
-  // 0  1  2  3  4
-  // 9  8  7  6  5
-  // 10 11 12 13 14
-  
-  // 0  1  2  3  4
-  // 5  6  7  8  9
-  // 10 11 12 13 14
-
-  Serial.println(pos);
   if(((pos / 5) % 2) != 0){
-    Serial.println(pos);
     pos = ((pos / 5) * (5))  + (4 - (pos % 5));
-    Serial.println(pos);
   }
   return pos;
 }
@@ -226,7 +216,6 @@ uint8_t translateMatrix(uint8_t pos){
 uint8_t updateMatrix(uint8_t* matrix){
   for(int i=0; i<NUMPIXELS; i++) {
   
-
     pixels.setPixelColor(translateMatrix(i), pixels.Color(0, 5, 0));
 
     pixels.show();   // Send the updated pixel colors to the hardware.
@@ -234,3 +223,24 @@ uint8_t updateMatrix(uint8_t* matrix){
     delay(DELAYVAL); // Pause before next pass through loop
   }
 }
+
+
+void updateEncInput(uint8_t* enc_statusNew, uint8_t* enc_statusOld, const uint8_t encoderPinA, const uint8_t encoderPinB, uint8_t* encPos){
+    *enc_statusNew = digitalRead(encoderPinA);
+    if(*enc_statusNew != *enc_statusOld){
+      if(digitalRead(encoderPinB)){
+        *encPos = *encPos + 1;
+        Serial.print("++: ");
+        Serial.println(*encPos);
+      } else {
+        *encPos = *encPos - 1;
+        Serial.print("--: ");
+        Serial.println(*encPos);
+      }
+    }
+}
+
+
+// uint8_t updateEncoder(uint8_t* newState, uint8_t* oldState){
+//   newState = digitalRead(p1ea_pin);
+// }
