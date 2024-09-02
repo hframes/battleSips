@@ -1,4 +1,5 @@
 #include "pushButton.h"
+//#include <Print.h>
 
 #define DEBOUNCE 250
 
@@ -14,6 +15,7 @@ int readButton(pushButton* button){
     if(digitalRead(button->pin)){
         return BUTTON_RELEASED;
     }
+    printINO("Hello World!");
     return BUTTON_PRESSED;
 }
 
