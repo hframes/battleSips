@@ -1,9 +1,10 @@
 #include "matrix.h"
 #include <stdio.h>
-
+//#include "battleSips.ino"
+#include <Arduino.h>
 
 #define COLOR_RESOLUTION_MAX    100
-#define COLOR_VALUE_MAX         100
+#define COLOR_VALUE_MAX         250
 #define COLOR_STRENGTH_MAX      10
 
 
@@ -26,7 +27,7 @@ typedef struct{
  * B: 0     0   -   0   0   1   -   99  100 99  -   1  
  */
 
-color* intToColor(int colorRange)
+color* intToRgb(int colorRange)
 {
     static color rgb = {.r = 0, .g = 0, .b = 0};
 
@@ -36,18 +37,18 @@ color* intToColor(int colorRange)
         rgb.g = colorRange;
         rgb.b = 0;
 
-    } else if(colorRange >= COLOR_RESOLUTION_MAX && colorRange > COLOR_RESOLUTION_MAX*2){
-        colorRange = COLOR_RESOLUTION_MAX - colorRange;
+    } else if(colorRange >= COLOR_RESOLUTION_MAX && colorRange < COLOR_RESOLUTION_MAX*2){
+        colorRange = colorRange - COLOR_RESOLUTION_MAX;
         
 
-        rgb.g = colorRange - COLOR_RESOLUTION_MAX;
+        rgb.g = COLOR_RESOLUTION_MAX - colorRange;
         rgb.b = colorRange;
         rgb.r = 0;
     
-    } else if(colorRange > COLOR_RESOLUTION_MAX*3){
-        colorRange = COLOR_RESOLUTION_MAX*2 - colorRange;
+    } else if(colorRange > COLOR_RESOLUTION_MAX*2){
+        colorRange =  colorRange - COLOR_RESOLUTION_MAX*2;
         
-        rgb.b = colorRange - COLOR_RESOLUTION_MAX;
+        rgb.b = COLOR_RESOLUTION_MAX - colorRange;
         rgb.r = colorRange;
         rgb.g = 0;
 	}
@@ -55,10 +56,8 @@ color* intToColor(int colorRange)
 	return &rgb;
 };
 
-color* setColor(int colorRange, double strength)
+color* intToRgbStrength(int colorRange, double strength)
 {
-    static color rgb = {.r = 0, .g = 0, .b = 0};
-    static color* rgb_ptr = &rgb;
 
     if(strength > 10){
         strength = 10;
@@ -68,20 +67,36 @@ color* setColor(int colorRange, double strength)
         strength = 0;
     }
 
-    rgb_ptr = intToColor(colorRange);
+    color* rgb_ptr = intToRgb(colorRange);
 
-    strength = (COLOR_VALUE_MAX / COLOR_STRENGTH_MAX) * strength;
+    strength = ((double) strength * COLOR_VALUE_MAX / (COLOR_STRENGTH_MAX * 100));
 
-    rgb_ptr->r = rgb_ptr->r*strength;
-    rgb_ptr->r = rgb_ptr->r*strength;
-    rgb_ptr->r = rgb_ptr->r*strength;
+    rgb_ptr->r = (int) (rgb_ptr->r * (double) strength); // x [0-100] * Y = color
+    rgb_ptr->g = (int) (rgb_ptr->g * (double) strength); // color max/ strength
+    rgb_ptr->b = (int) (rgb_ptr->b * (double) strength);
 
     return rgb_ptr;
 
 };
 
-
-/* int setColor(int color, int pixel, Adafruit_NeoPixel pixels)
+int setPixel(pixel seaMatrix[], int place, color* rgb)
 {
-    pixels.setPixelColor(i, pixels.Color(1, 1, 0));
-}; */
+    place = snakeToMatrix(place);
+    seaMatrix[place] = *createPixel(place, *rgb);
+}
+
+int snakeToMatrix(int pos)
+{
+  if(((pos / 5) % 2) != 0){
+    //Serial.println(pos);
+    pos = ((pos / 5) * (5))  + (4 - (pos % 5));
+    //Serial.println(pos);
+  }
+  return pos;
+};
+
+pixel* createPixel(int place, color rgb)
+{
+    static pixel p = {place, rgb};
+    return &p;
+};

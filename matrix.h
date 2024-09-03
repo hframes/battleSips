@@ -8,17 +8,24 @@ typedef struct{
     int b;    
 }color;
 
+
 typedef struct{
     int place;
     color color;
-}seaDex;
+}pixel;
 
 #define RED     0
 #define GREEN   1
 #define BLUE    2
 
-color* setColor(int colorRange, double strength);
-color* intToColor(int colorInt);
+color* intToRgbStrength(int colorInt, double strength);
+color* intToRgb(int colorInt);
+int snakeToMatrix(int pos);
+int setPixel(pixel seaMatrix[], int place, color* rgb);
+pixel* createPixel(int place, color rgb);
+
+
+
 
 
 #endif
