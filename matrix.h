@@ -18,10 +18,10 @@ typedef struct{
 #define GREEN   1
 #define BLUE    2
 
-color* intToRgbStrength(int colorInt, double strength);
-color* intToRgb(int colorInt);
+color intToRgbStrength(int colorInt, double strength);
+color intToRgb(int colorInt);
 int snakeToMatrix(int pos);
-int setPixel(pixel seaMatrix[], int place, color* rgb);
+int setPixel(pixel seaMatrix[], int place, color rgb);
 pixel* createPixel(int place, color rgb);
 
 

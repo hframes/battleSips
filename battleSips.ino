@@ -26,11 +26,29 @@ void setup() {
 
 void loop() {
 
+  Serial.println("Set sea:");
+  Serial.println(intToRgbStrength(200, 5).r);
+  Serial.println(intToRgbStrength(200, 5).g);
+  Serial.println(intToRgbStrength(200, 5).b);
+  Serial.println("-");
   for(int i = 0; i < NUMPIXELS; i++){
-    setPixel(sea, i, intToRgbStrength(200, 1));
+    setPixel(&sea[i], i, intToRgbStrength(300, 1));
+      Serial.print("sea[i].color 1 | r: ");
+      Serial.print(sea[i].color.r);
+      Serial.print(", g: ");
+      Serial.print(sea[i].color.g);
+      Serial.print(", b: ");
+      Serial.println(sea[i].color.b);
   }
 
+  Serial.println("Light sea: \n");
   for(int i = 0; i < NUMPIXELS; i++){
+      Serial.print("sea[i].color.r: ");
+      Serial.println(sea[i].color.r);
+      Serial.print("sea[i].color.g: ");
+      Serial.println(sea[i].color.g);
+      Serial.print("sea[i].color.b: ");
+      Serial.println(sea[i].color.b);
       pixels.setPixelColor(snakeToMatrix(i), pixels.Color(sea[i].color.r, sea[i].color.g, sea[i].color.b));
       //pixels.setPixelColor(snakeToMatrix(i), pixels.Color(10, 0, 0));
       pixels.show();   // Send the updated pixel colors to the hardware.
