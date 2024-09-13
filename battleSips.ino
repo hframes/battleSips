@@ -5,10 +5,12 @@
 #include "matrix.h"
 #include <Adafruit_NeoPixel.h>
 
-#define DELAYVAL 1000 // Time (in milliseconds) to pause between pixels
+#define DELAYVAL 0  // Time (in milliseconds) to pause between pixels
 
-#define PIN        9
-#define NUMPIXELS 40 
+#define PIN 9
+#define NUMPIXELS 40
+#define ROW 5
+
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN);
 
 int colorTrack = 0;
@@ -17,44 +19,47 @@ color* rgb_ptr = &rgb;
 
 pixel sea[NUMPIXELS];
 
+int row = 1;
+int dir = 0;
+int rangeLow = 0;
+int rangeHigh = 0;
 
 void setup() {
   Serial.begin(9600);
   pixels.begin();
-
 }
 
 void loop() {
+  
+  rangeLow = row*5;
+  rangeHigh = row*5+5;
 
-  Serial.println("Set sea:");
-  Serial.println(intToRgbStrength(200, 5).r);
-  Serial.println(intToRgbStrength(200, 5).g);
-  Serial.println(intToRgbStrength(200, 5).b);
-  Serial.println("-");
-  for(int i = 0; i < NUMPIXELS; i++){
-    setPixel(&sea[i], i, intToRgbStrength(300, 1));
-      Serial.print("sea[i].color 1 | r: ");
-      Serial.print(sea[i].color.r);
-      Serial.print(", g: ");
-      Serial.print(sea[i].color.g);
-      Serial.print(", b: ");
-      Serial.println(sea[i].color.b);
+  //Serial.print("row:");
+  //Serial.println(row);
+
+  for (int i = 0; i < NUMPIXELS; i++) {
+    if (i >= rangeLow  && i < rangeHigh ){
+      setPixel(&sea[i], i, intToRgbStrength(100, 8));
+    } else {
+      setPixel(&sea[i], i, intToRgbStrength(120, 0));
+    }
+
   }
 
-  Serial.println("Light sea: \n");
-  for(int i = 0; i < NUMPIXELS; i++){
-      Serial.print("sea[i].color.r: ");
-      Serial.println(sea[i].color.r);
-      Serial.print("sea[i].color.g: ");
-      Serial.println(sea[i].color.g);
-      Serial.print("sea[i].color.b: ");
-      Serial.println(sea[i].color.b);
-      pixels.setPixelColor(snakeToMatrix(i), pixels.Color(sea[i].color.r, sea[i].color.g, sea[i].color.b));
-      //pixels.setPixelColor(snakeToMatrix(i), pixels.Color(10, 0, 0));
-      pixels.show();   // Send the updated pixel colors to the hardware.
-      delay(DELAYVAL); // Pause before next pass through loop
+  for (int i = 0; i < NUMPIXELS; i++) {
+    pixels.setPixelColor(snakeToMatrix(i), pixels.Color(sea[i].color.r, sea[i].color.g, sea[i].color.b));
+    pixels.show();  // Send the updated pixel colors to the hardware.
   }
 
-    pixels.clear();
-//    pixels.show();   // Send the updated pixel colors to the hardware.
+//  delay(DELAYVAL);
+  if (dir){
+    row++;
+  } else {
+    row--;
+  }
+  if(row > 6 || row < 1 ){
+    dir = !dir;
+  }
+  //pixels.clear();
+  //    pixels.show();   // Send the updated pixel colors to the hardware.
 }

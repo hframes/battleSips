@@ -30,34 +30,31 @@ typedef struct{
 color intToRgb(int colorRange)
 {
     color rgb = {.r = 0, .g = 0, .b = 0};
-
     if(colorRange < COLOR_RESOLUTION_MAX)
     {
+        // RED
         rgb.r = COLOR_RESOLUTION_MAX - colorRange;
         rgb.g = colorRange;
         rgb.b = 0;
-
     } else if(colorRange >= COLOR_RESOLUTION_MAX && colorRange <= (COLOR_RESOLUTION_MAX*2)){
+        // GREEN
         colorRange = colorRange - COLOR_RESOLUTION_MAX;
         
 
         rgb.g = COLOR_RESOLUTION_MAX - colorRange;
         rgb.b = colorRange;
         rgb.r = 0;
-    
+
     } else if(colorRange > COLOR_RESOLUTION_MAX*2){
+        // BLUE
         colorRange =  colorRange - COLOR_RESOLUTION_MAX*2;
         
         rgb.b = COLOR_RESOLUTION_MAX - colorRange;
         rgb.r = colorRange;
         rgb.g = 0;
+
 	}
-  Serial.print("intToRgb  | r: ");
-  Serial.print(rgb.r);
-  Serial.print(", g: ");
-  Serial.print(rgb.g);
-  Serial.print(", b: ");
-  Serial.println(rgb.b);
+
 	return rgb;
 };
 
@@ -82,13 +79,6 @@ color intToRgbStrength(int colorRange, double strength)
     rgb.r = (int) (rgb.r * (double) strength); // x [0-100] * Y = color
     rgb.g = (int) (rgb.g * (double) strength); // color max/ strength
     rgb.b = (int) (rgb.b * (double) strength);
-    
-    Serial.print("intToRgbStrength | r: ");
-    Serial.print(rgb.r);
-    Serial.print(", g: ");
-    Serial.print(rgb.g);
-    Serial.print(", b: ");
-    Serial.println(rgb.b);
 
     return rgb;
 
