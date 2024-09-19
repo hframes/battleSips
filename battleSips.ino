@@ -39,6 +39,6 @@ void setup() {
 
 void loop() {
   Serial.println("- Running 'Knightrider'");
-  knightrider(5, &seaMatrix);
+  lightrider(5, &seaMatrix);
 
 }

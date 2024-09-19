@@ -26,6 +26,7 @@ typedef struct{
 #define BLUE    2
 
 color intToRgbStrength(int colorInt, double strength);
+color intToRgbLight(int colorRange, double light);
 color intToRgb(int colorInt);
 int snakeToMatrix(int pos);
 int setPixel(pixel seaMatrix[], int place, color rgb);

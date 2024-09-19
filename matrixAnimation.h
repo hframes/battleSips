@@ -5,5 +5,6 @@
 #include "matrix.h"
 
 int knightrider(int seconds, pixelMatrix* pixelMatrix);
+int lightrider(int seconds, pixelMatrix* pixelMatrix);
 
 #endif
