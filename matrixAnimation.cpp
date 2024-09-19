@@ -10,8 +10,6 @@ int knightrider(int seconds, pixelMatrix *pixelMatrix)
     int rangeLow = 0;
     int rangeHigh = 0;
 
-
-
     while (millis() < end)
     {
         rangeHigh = row * 5 + 5;
@@ -36,25 +34,10 @@ int knightrider(int seconds, pixelMatrix *pixelMatrix)
             pixelMatrix->pixelsAdafruit->show(); // Send the updated pixel colors to the hardware.
         }
 
-        if (dir)
-        {
-            row++;
-        }
-        else
-        {
-            row--;
-        }
-        if (row > 6 || row < 1)
-        {
-            dir = !dir;
-        }
-        Serial.print("In knight rider! Ending in: ");
-        Serial.println(end - millis());
-        Serial.print("Dir: ");
-        Serial.print(dir);
-        Serial.print(", row: ");
-        Serial.println(row);
-        delay(200);
+        (dir) ? row++ : row--; 
+        
+        (row > 6 || row < 1) ? dir = !dir : 0;
+
     }
 
     return 1;
