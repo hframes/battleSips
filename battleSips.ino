@@ -17,7 +17,7 @@ int colorTrack = 0;
 color rgb;
 color* rgb_ptr = &rgb;
 
-pixel sea[NUMPIXELS];
+pixelMatrix seaMatrix = {40, 5, 8};
 
 int row = 1;
 int dir = 0;
@@ -37,17 +37,18 @@ void loop() {
   //Serial.print("row:");
   //Serial.println(row);
 
-  for (int i = 0; i < NUMPIXELS; i++) {
+  for (int i = 0; i < seaMatrix.pixelAmount; i++) {
     if (i >= rangeLow  && i < rangeHigh ){
-      setPixel(&sea[i], i, intToRgbStrength(100, 8));
+      setPixel(&seaMatrix.matrix[i], i, intToRgbStrength(150, 1));
     } else {
-      setPixel(&sea[i], i, intToRgbStrength(120, 0));
+      setPixel(&seaMatrix.matrix[i], i, intToRgbStrength(120, 0));
     }
 
   }
 
   for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(snakeToMatrix(i), pixels.Color(sea[i].color.r, sea[i].color.g, sea[i].color.b));
+    //pixels.setPixelColor(snakeToMatrix(i), pixels.Color(sea[i].color.r, sea[i].color.g, sea[i].color.b));
+    pixels.setPixelColor(snakeToMatrix(i), pixels.Color(seaMatrix.matrix[i].color.r, seaMatrix.matrix[i].color.g, seaMatrix.matrix[i].color.b));
     pixels.show();  // Send the updated pixel colors to the hardware.
   }
 

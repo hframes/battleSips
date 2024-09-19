@@ -2,20 +2,13 @@
 #include <stdio.h>
 //#include "battleSips.ino"
 #include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
+
 
 #define COLOR_RESOLUTION_MAX    100
 #define COLOR_VALUE_MAX         250
 #define COLOR_STRENGTH_MAX      10
-
-
-
-
-typedef struct{
-    int numberOfPixels;
-
-    //Adafruit_NeoPixel pixels;
-}matrix;
-
+#define COLOR_STRENGTH_MIN      0
 
 
 
@@ -61,12 +54,12 @@ color intToRgb(int colorRange)
 color intToRgbStrength(int colorRange, double strength)
 {
 
-    if(strength > 10){
-        strength = 10;
+    if(strength > COLOR_STRENGTH_MAX){
+        strength = COLOR_STRENGTH_MAX;
     }
-    else if(strength < 0)
+    else if(strength < COLOR_STRENGTH_MIN)
     {
-        strength = 0;
+        strength = COLOR_STRENGTH_MIN;
     }
 
     color rgb;

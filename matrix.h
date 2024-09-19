@@ -1,6 +1,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
-//#include <Adafruit_NeoPixel.h>
+#include <Adafruit_NeoPixel.h>
 
 typedef struct{
     int r;
@@ -8,11 +8,18 @@ typedef struct{
     int b;    
 }color;
 
-
 typedef struct{
     int place;
     color color;
 }pixel;
+
+typedef struct{
+    int pixelAmount;
+    int pixelRow;
+    int pixelColumn;
+    pixel matrix[100];
+    Adafruit_NeoPixel pixelsAdafruit;
+}pixelMatrix;
 
 #define RED     0
 #define GREEN   1
