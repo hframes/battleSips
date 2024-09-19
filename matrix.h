@@ -17,8 +17,8 @@ typedef struct{
     int pixelAmount;
     int pixelRow;
     int pixelColumn;
-    pixel matrix[100];
-    Adafruit_NeoPixel pixelsAdafruit;
+    pixel pixelArray[100];
+    Adafruit_NeoPixel* pixelsAdafruit;
 }pixelMatrix;
 
 #define RED     0
@@ -30,9 +30,5 @@ color intToRgb(int colorInt);
 int snakeToMatrix(int pos);
 int setPixel(pixel seaMatrix[], int place, color rgb);
 pixel* createPixel(int place, color rgb);
-
-
-
-
 
 #endif

@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "matrix.h": "c",
-        "battlesips.ino": "c"
+        "battlesips.ino": "c",
+        "matrixanimation.h": "c"
     }
 }
