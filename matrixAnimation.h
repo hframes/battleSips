@@ -6,5 +6,6 @@
 
 int knightrider(int seconds, pixelMatrix* pixelMatrix);
 int lightrider(int seconds, pixelMatrix* pixelMatrix);
+int animationWave(int seconds, pixelMatrix *pixelMatrix);
 
 #endif

@@ -24,9 +24,6 @@ pixelMatrix seaMatrix = {
   .pixelRow = 5,
   .pixelColumn = 8
 };
-  
-
-int WLA[32];
 
 
 void setup() {
@@ -42,8 +39,11 @@ void setup() {
 
 void loop() {
 
-  Serial.println("- Running 'Knightrider'");
-  lightrider(5, &seaMatrix);
+  // Serial.println("- Running 'Knightrider'");
+  // lightrider(5, &seaMatrix);
+
+  Serial.println("- Running 'animationWave'");
+  animationWave(5, &seaMatrix);
 
 
 
