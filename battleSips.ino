@@ -26,6 +26,9 @@ pixelMatrix seaMatrix = {
 };
   
 
+int WLA[32];
+
+
 void setup() {
   Serial.begin(9600);
   pixels.begin();
@@ -38,7 +41,10 @@ void setup() {
 }
 
 void loop() {
+
   Serial.println("- Running 'Knightrider'");
   lightrider(5, &seaMatrix);
+
+
 
 }

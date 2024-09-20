@@ -66,7 +66,7 @@ color intToRgbStrength(int colorRange, double strength)
     rgb.g = intToRgb(colorRange).g;
     rgb.b = intToRgb(colorRange).b;
 
-    strength = ((double)strength * COLOR_VALUE_MAX / (COLOR_STRENGTH_MAX * 100));
+    strength = ((double)strength * COLOR_VALUE_MAX / (COLOR_STRENGTH_MAX * COLOR_RESOLUTION_MAX));
 
     rgb.r = (int)(rgb.r * (double)strength);
     rgb.g = (int)(rgb.g * (double)strength);
@@ -75,6 +75,9 @@ color intToRgbStrength(int colorRange, double strength)
     return rgb;
 };
 
+// Return Color object
+// Color range: [0-299] (RED-0, GREEN-100, BLUE 200)
+// Light range: [0-20] (Dark-0, Color-10, White-20)
 color intToRgbLight(int colorRange, double light)
 {
     color rgb;
@@ -84,12 +87,14 @@ color intToRgbLight(int colorRange, double light)
     light = (light < LIGHT_VALUE_MIN) ? LIGHT_VALUE_MIN : light;
 
     // Scale light to 255
-    light = ((double)light-10 * COLOR_VALUE_MAX / (COLOR_STRENGTH_MAX * 100));
+    int white = (light>COLOR_STRENGTH_MAX) ? light - 10 : 0;
+    white = (((double)(white) * COLOR_VALUE_MAX) / (COLOR_STRENGTH_MAX));
+    light = (((double)(light) * COLOR_VALUE_MAX) / (COLOR_STRENGTH_MAX * 100));
 
     // Set color
-    rgb.r = intToRgb(colorRange).r * light + light;
-    rgb.g = intToRgb(colorRange).g * light + light;
-    rgb.b = intToRgb(colorRange).b * light + light;
+    rgb.r = intToRgb(colorRange).r * light + white;
+    rgb.g = intToRgb(colorRange).g * light + white;
+    rgb.b = intToRgb(colorRange).b * light + white;
 
     // Saturate color value
     rgb.r = (rgb.r > COLOR_VALUE_MAX) ? COLOR_VALUE_MAX : rgb.r;

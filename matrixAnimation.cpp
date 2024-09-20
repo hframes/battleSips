@@ -62,7 +62,7 @@ int lightrider(int seconds, pixelMatrix *pixelMatrix)
         {
             if (i >= rangeLow && i < rangeHigh)
             {
-                setPixel(&pixelMatrix->pixelArray[i], i, intToRgbLight(100, 20));
+                setPixel(&pixelMatrix->pixelArray[i], i, intToRgbLight(180, 1));
             }
             else
             {
