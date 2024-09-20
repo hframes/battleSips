@@ -87,12 +87,14 @@ int lightrider(int seconds, pixelMatrix *pixelMatrix)
 int animationWave(int seconds, pixelMatrix *pixelMatrix)
 {
 
+    unsigned long start = millis();
     int end = millis() + seconds * 1000;
 
     int length = 40;
     int rows[length];
+    int delayMillis = 10;
 
-    Serial.print("\nrows[i]: ");
+    // Create wave
     for (int i = 0; i < length; i++)
     {
         if (i < 8)
@@ -107,22 +109,43 @@ int animationWave(int seconds, pixelMatrix *pixelMatrix)
         {
             rows[i] = 1;
         }
-        Serial.print(rows[i]);
     }
 
     pixelMatrix->pixelsAdafruit->clear();
 
+    int testAnim = 1;
+
+    // Run through animation
+        Serial.print("row: \t[0,\t 1,\t 2,\t 3]");
     for (int anim = 0; anim < length - 7; anim++)
     {
-                    Serial.print("\n anim: ");
-                    Serial.print(anim);
+
+        Serial.print("\nanim: \t[");
+        Serial.print(anim);
+        Serial.print(",\t ");
+        Serial.print(anim+1);
+        Serial.print(",\t ");
+        Serial.print(anim+2);
+        Serial.print(",\t ");
+        Serial.print(anim+3);
+        Serial.print("]");
+
+        if (anim > 12 && anim < 28)
+        {
+            Serial.print(" -> ");
+            Serial.print(anim - anim / 5);
+            testAnim++;
+
+            // setPixel(&pixelMatrix->pixelArray[i], i, intToRgbLight(100, rows[anim - i + (i / 5)]));
+        }
 
         for (int i = 0; i < pixelMatrix->pixelAmount; i++)
         {
-            setPixel(&pixelMatrix->pixelArray[i], i, intToRgbLight(200, rows[anim + (i / 5)]));
+            int rowOffset = (i / 5);
+            setPixel(&pixelMatrix->pixelArray[i], i, intToRgbLight(200, rows[anim + rowOffset]));
 
         }
-        delay(50);
+        delay(delayMillis);
         for (int i = 0; i < pixelMatrix->pixelAmount; i++)
         {
             // pixels.setPixelColor(snakeToMatrix(i), pixels.Color(sea[i].color.r, sea[i].color.g, sea[i].color.b));
@@ -130,8 +153,10 @@ int animationWave(int seconds, pixelMatrix *pixelMatrix)
             pixelMatrix->pixelsAdafruit->show(); // Send the updated pixel colors to the hardware.
         }
     }
-    while (millis() < end)
+    while (millis() - start < seconds * 1000)
     {
+        // Serial.print("\n time remaning: ");
+        // Serial.print((seconds * 1000) - (millis()-start));
     }
 
     return 1;
